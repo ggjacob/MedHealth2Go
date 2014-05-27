@@ -1,0 +1,42 @@
+div.dataTables_length label {
+    float: right;
+    text-align: left;
+}
+
+div.dataTables_length select {
+    width: 75px;
+}
+
+div.dataTables_filter label {
+    float: right;
+}
+
+div.dataTables_info {
+    padding-top: 8px;
+}
+
+div.dataTables_paginate {
+    float: right;
+    margin: 0;
+}
+
+table {
+    margin: 1em 0;
+    clear: both;
+}
+#apptTable  th {
+    background-color: #42576a;
+    color: white;
+
+}
+#apptTable { margin-top:0px; }
+#apptTable_length { margin-top:5px; }
+#apptTable_length label { margin-bottom:0px; }
+#apptTable_filter { margin-top:5px; }
+#apptTable_filter label { margin-bottom:0px; }
+
+/* added by Md Shariful Islam */
+#apptTable_wrapper .row-fluid .span4{width: 48.624%;}
+#apptTable_wrapper .row-fluid .offset4:first-child {
+    margin-left: -0.453%;
+}
