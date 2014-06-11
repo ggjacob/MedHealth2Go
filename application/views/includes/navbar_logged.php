@@ -32,15 +32,24 @@ $userdata=$this->session->all_userdata();
                     <div class="nav-collapse collapse">
                         <ul class="nav pull-right">
                             <?php if($userdata['role_id']==4) {?>
-                            <li class=""><a href="<?php echo base_url();?>account/">Users</a></li>
+                                <li <?php if($menu=="users"){ ?>class="active" <?php } ?>><a href="<?php echo base_url();?>account/">Users</a></li>
                             <?php } ?>
-                            <li class="active"><a href="<?php echo base_url() ;?>appointment/">Appointments</a></li><li class="dropdown">
-                                <a class="dropdown-toggle" data-toggle="dropdown" href="#">Hello, <?php echo $userdata['email'] ;?> <b class="caret bottom-up"></b></a>
+
+                            <li <?php if($menu=="appointment"){ ?>class="active" <?php } ?>><a href="<?php echo base_url() ;?>appointment/">Scheduling</a></li>
+                            <?php if($userdata['role_id']==1) {?>
+                                <li <?php if($menu=="current_session"){ ?>class="active" <?php } ?>><a href="<?php echo base_url();?>appointment/create_session">Create Session</a></li>
+                            <?php } ?>
+                            <li class="dropdown">
+                                <a class="dropdown-toggle" data-toggle="dropdown" href="#">Hello, <?php echo $userdata['email'] ;?> <b class="caret bottom-up"></b>
+                                </a>
                                 <ul class="dropdown-menu bottom-up pull-right">
-                                    <li><a href="#">Settings</a></li>
-                                    <li><a href="<?php echo base_url();?>logout">Log out</a></li>
+                                    <li><a href="<?php echo base_url()?>account/UpdatePassword/<?php echo $userdata['user_id'] ;?>">Settings</a></li>
+                                    <li><a href="<?php echo base_url();?>logout">Log out</a>
+                                    </li>
                                 </ul>
-                            </li></ul>
+                            </li>
+
+                        </ul>
                     </div>
                     <!-- img alt='MedHealth2Go Logo' src='images/assets/landscapes/logo.png' -->
                 </div>

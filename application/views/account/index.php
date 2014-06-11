@@ -40,7 +40,7 @@ $userdata=$this->session->all_userdata();
                                 <td class="title"><?php echo $user['role_name'] ; ?></td>
                                 <td>
                                     <?php if($user['role_id']==1||$user['role_id']==2) {?>
-                                        <a href="https://qtc.medhealth2go.com/appointments-view?id=119&amp;role=Provider"><button type="button" class="btn btn-info">View</button></a>
+                                        <a target="_blank" href="<?php echo base_url()?>appointment/user/?role_id=<?php echo $user['role_id'];?>&user_id=<?php echo $user['user_id'];?>"><button type="button" class="btn btn-info">View</button></a>
                                     <?php } ?>
                                 </td>
                                 <?php if($user['active']==1){?>

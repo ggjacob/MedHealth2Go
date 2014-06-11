@@ -58,6 +58,15 @@ class Userdb extends CI_Model {
         $this->db->where('email',$email);
         $this->db->update('users',$data);
     }
+    public function updatePasswordByID($password, $user_id)
+    {
+        $data=array(
+            'password'=>$password
+        );
+        $this->db->where('user_id',$user_id);
+        $this->db->update('users',$data);
+    }
+
     public function getProvider()
     {
         $this->db->select('*');
@@ -164,6 +173,22 @@ class Userdb extends CI_Model {
         $this->db->from('user_role');
         $query=$this->db->get();
         return $query->result_array();
+    }
+
+    /*checking*/
+    public function check_user_current_password($password, $user_id)
+    {
+        $query = $this->db->get_where('users', array('user_id' => $user_id,'password'=>$password,'active'=>1));
+
+        if($query->row_array()==null)
+        {
+            return false;
+        }
+        else
+        {
+            return true;
+        }
+
     }
     public function existingCheck($email)
     {

@@ -63,6 +63,28 @@
 
             event.preventDefault();
         });
+        $("#apptTable").on("click","tbody tr .deletebutton", function (event) {
+
+            var appointment_id=$(this).data("id");
+
+            if( confirm('Are you sure you want to delete this appointment?') ) {
+                $.post( "<?php echo base_url(); ?>appointment/deleteAppointment", { action: "remove", appointment_id: $(this).data("id") }, function( data ) {
+
+                    if (data.success) {
+                        $('#success-div').removeClass( "alert-error" ).addClass( "alert-success" );
+                        $("#success-msg").text(data.message);
+                        $("#success-div").show();
+
+                    } else {
+                        $('#success-div').removeClass( "alert-success" ).addClass( "alert-error" );
+                        $("#success-msg").text(data.message);
+                        $("#success-div").show();
+                    }
+                    $('.deletebutton[data-id="'+appointment_id+'"]').closest('tr').remove();
+                    $("#success-div").removeClass('hide')
+                },"json");
+            }
+        });
     });
 </script>
 <?php
@@ -85,9 +107,9 @@ $userdata=$this->session->all_userdata();
                         <!--button class="close" data-dismiss="alert" type="button">×</button-->
                         <div id="success-msg">:</div>
                     </div>
-                <?php if($userdata['role_id']!=2){?>
-                    <button data-toggle="modal" data-target="#myModal" class="btn btn-small btn-primary"><i class="icon-plus icon-white"></i></button>
-                    <button data-toggle="modal" data-target="#importModal" class="btn btn-small btn-primary">Import</button>
+                    <?php if($userdata['role_id']!=2){?>
+                        <button data-toggle="modal" data-target="#myModal" class="btn btn-small btn-primary"><i class="icon-plus icon-white"></i></button>
+                        <button data-toggle="modal" data-target="#importModal" class="btn btn-small btn-primary">Import</button>
                     <?php } ?>
                     <table id="apptTable" class="display" cellspacing="0" width="100%">
                         <thead>
@@ -96,7 +118,9 @@ $userdata=$this->session->all_userdata();
                             <th>Patient</th>
                             <th>Start Date/Time</th>
                             <th>Duration (min)</th>
-                            <th>Status</th>
+                            <?php if($userdata['role_id']==3) {?>
+                                <th>Status</th>
+                            <?php  } ?>
                             <th>Delete</th>
                         </tr>
                         </thead>
@@ -104,41 +128,50 @@ $userdata=$this->session->all_userdata();
 
                         <tbody>
                         <?php foreach($Appointments as $appointment) {?>
-                            <?php if($userdata['role_id']==1) {?>
-                                <?php if($userdata['user_id']==$appointment['did']) {?>
-                                    <tr class="error danger">
-                                        <td><?php echo $appointment['dlast_name'].", ".$appointment['dfirst_name'] ;?></td>
-                                        <td><?php echo $appointment['plast_name'].", ".$appointment['pfirst_name'] ;?></td>
+                        <?php if($userdata['role_id']==1) {?>
+                            <?php if($userdata['user_id']==$appointment['did']) {?>
+                                <tr class="error danger appRow">
+                                    <td><?php echo $appointment['dlast_name'].", ".$appointment['dfirst_name'] ;?></td>
+                                    <td><?php echo $appointment['plast_name'].", ".$appointment['pfirst_name'] ;?></td>
+                                    <td><?php echo $appointment['start_date_time'] ;?></td>
+                                    <td><?php echo $appointment['duration'] ;?>
+                                    <td>
+                                        <button class="btn btn-danger deletebutton"  data-id="<?php echo $appointment['appointment_id'] ;?>">
+                                            <i class="icon-remove icon-white"></i></button>
+                                    </td>
+                                </tr>
 
-                                        <td><?php echo $appointment['start_date_time'] ;?></td>
-                                        <td><?php echo $appointment['duration'] ;?>
-                                        </td><td><?php echo $appointment['status'] ;?></td>
-                                        <td>
-                                            <input type="hidden" value="delete" name="action">
-                                            <input type="hidden" value="41d292da46a11046ee6666f44ee5209d5327717d07bf15.61374591" name="meetingId">
-                                            <button class="btn btn-danger"><i class="icon-trash icon-white"></i></button>
-                                        </td>
-                                    </tr>
-                                <?php } ?>
-                            <?php } ?>
-                            <?php if($userdata['role_id']==2) {?>
-                                <?php if($userdata['user_id']==$appointment['pid']) {?>
-                                    <tr class="error danger">
-                                        <td><?php echo $appointment['dlast_name'].", ".$appointment['dfirst_name'] ;?></td>
-                                        <td><?php echo $appointment['plast_name'].", ".$appointment['pfirst_name'] ;?></td>
-
-                                        <td><?php echo $appointment['start_date_time'] ;?></td>
-                                        <td><?php echo $appointment['duration'] ;?>
-                                        </td><td><?php echo $appointment['status'] ;?></td>
-                                        <td>
-                                            <input type="hidden" value="delete" name="action">
-                                            <input type="hidden" value="41d292da46a11046ee6666f44ee5209d5327717d07bf15.61374591" name="meetingId">
-                                            <button class="btn btn-danger"><i class="icon-trash icon-white"></i></button>
-                                        </td>
-                                    </tr>
-                                <?php } ?>
                             <?php } ?>
                         <?php } ?>
+                        <?php if($userdata['role_id']==2) {?>
+                            <?php if($userdata['user_id']==$appointment['pid']) {?>
+                                <tr class="error danger">
+                                    <td><?php echo $appointment['dlast_name'].", ".$appointment['dfirst_name'] ;?></td>
+                                    <td><?php echo $appointment['plast_name'].", ".$appointment['pfirst_name'] ;?></td>
+                                    <td><?php echo $appointment['start_date_time'] ;?></td>
+                                    <td><?php echo $appointment['duration'] ;?>
+                                    <td>
+                                        <button class="btn btn-danger deletebutton"  data-id="<?php echo $appointment['appointment_id'] ;?>">
+                                            <i class="icon-remove icon-white"></i></button>
+                                    </td>
+                                </tr>
+                            <?php } ?>
+                        <?php } ?>
+                        <?php if($userdata['role_id']==4) {?>
+
+                        <tr class="error danger">
+                            <td><?php echo $appointment['dlast_name'].", ".$appointment['dfirst_name'] ;?></td>
+                            <td><?php echo $appointment['plast_name'].", ".$appointment['pfirst_name'] ;?></td>
+
+                            <td><?php echo $appointment['start_date_time'] ;?></td>
+                            <td><?php echo $appointment['duration'] ;?></td>
+                            <td>
+                                <button class="btn btn-danger deletebutton"  data-id="<?php echo $appointment['appointment_id'] ;?>">
+                                    <i class="icon-remove icon-white"></i></button>
+                            </td>
+
+                            <?php } ?>
+                            <?php } ?>
                         </tbody>
                     </table>
 
@@ -160,7 +193,7 @@ $userdata=$this->session->all_userdata();
                             <input name="action" value="newAppt" type="hidden">
                             <?php if($userdata['role_id']==1){?>
 
-                                <select name="provider" class="span12" disabled>
+                                <select style="display: none;" name="provider" class="span12" disabled>
                                     <?php foreach($Providers as $provider) {?>
                                         <option value="<?php echo $provider['user_id']  ?>" <?php  if($userdata['user_id']==$provider['user_id']) echo "selected";?>>
                                             <?php echo $provider['last_name'].", ".$provider['first_name'] ;?>
@@ -168,31 +201,31 @@ $userdata=$this->session->all_userdata();
                                     <?php } ?>
                                 </select>
 
-                                <?php } else {?>
+                            <?php } else {?>
 
-                                    <select name="provider" class="span12">
-                                        <option value="-1" disabled="disabled" selected="selected"> --Select Provider-- </option>
-                                        <?php foreach($Providers as $provider) {?>
-                                            <option value="<?php echo $provider['user_id'] ?>"><?php echo $provider['last_name'].", ".$provider['first_name'] ;?></option>
-                                        <?php } ?>
-                                    </select>
-                                <?php } ?>
-
-
-                                <select name="patient" class="span12">
-                                    <option value="-1" disabled="disabled" selected="selected"> --Select Patient-- </option>
-                                    <?php foreach($Patients as $patient) {?>
-                                        <option value="<?php echo $patient['user_id'] ?>"><?php echo $patient['last_name'].", ".$patient['first_name'] ;?></option>
+                                <select name="provider" class="span12">
+                                    <option value="-1" disabled="disabled" selected="selected"> --Select Provider-- </option>
+                                    <?php foreach($Providers as $provider) {?>
+                                        <option value="<?php echo $provider['user_id'] ?>"><?php echo $provider['last_name'].", ".$provider['first_name'] ;?></option>
                                     <?php } ?>
                                 </select>
+                            <?php } ?>
 
 
-                                <select name="duration" class="span12">
-                                    <option value="-1" disabled="disabled" selected="selected"> --Select Duration-- </option>
-                                    <option value="15">15 minutes</option>
-                                    <option value="30">30 minutes</option>
-                                    <option value="60">60 minutes</option>
-                                </select>
+                            <select name="patient" class="span12">
+                                <option value="-1" disabled="disabled" selected="selected"> --Select Patient-- </option>
+                                <?php foreach($Patients as $patient) {?>
+                                    <option value="<?php echo $patient['user_id'] ?>"><?php echo $patient['last_name'].", ".$patient['first_name'] ;?></option>
+                                <?php } ?>
+                            </select>
+
+
+                            <select name="duration" class="span12">
+                                <option value="-1" disabled="disabled" selected="selected"> --Select Duration-- </option>
+                                <option value="15">15 minutes</option>
+                                <option value="30">30 minutes</option>
+                                <option value="60">60 minutes</option>
+                            </select>
 
                             <div class="control-group">
                                 <div class="controls input-append date form_datetime" data-date="2014-04-19T12:00:00Z" data-date-format="yyyy-mm-dd HH:ii:ss" data-link-field="date_time">

@@ -6,8 +6,8 @@
         </div>
         <div class="row">
             <div class="span6 offset3">
-                <h1> Admin Home Page</h1>
+                <h1> <?php echo $page_description ;?></h1>
             </div>
         </div>
- </div>
+    </div>
     <!-- End: MAIN CONTENT -->

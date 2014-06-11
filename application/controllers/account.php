@@ -51,12 +51,68 @@ class Account extends CI_Controller {
         $data['users']=$Users;
 
         $data['title'] = TITLE;
+        $data['menu']="users";
         $data['navbar']='includes/navbar_logged.php';
         $data['body'] = 'account/index.php';
         $this->load->view('template', $data);;
 
 	}
+    public  function UpdatePassword($user_id)
+    {
 
+        $this->form_validation->set_rules('currentPassword', 'Current Password', 'required|callback_user_current_password');
+        $this->form_validation->set_rules('newPassword', 'New Password', 'trim|min_length[5]|max_length[30]|required|matches[confirmPassword]');
+        $this->form_validation->set_rules('confirmPassword', 'Confirm Password', 'required');
+
+        $this->form_validation->set_message('user_current_password','Current password mismatch!');
+
+
+
+        if ($this->form_validation->run() == FALSE)
+        {
+            if($this->input->post('submit')!="Update")
+            {
+                $data['hide']=true;
+            }
+            else
+                $data['hide']=false;
+
+            $data['success']=false;
+            $data['title'] = TITLE;
+            $data['menu']="";
+            $data['navbar']='includes/navbar_logged.php';
+            $data['body'] = 'account/update_password.php';
+
+            $this->load->view('template', $data);
+        }
+        else
+        {
+            $password=$this->input->post('newPassword');
+            $this->userdb->updatePasswordByID($password, $user_id);
+
+            $data['title'] = TITLE;
+            $data['menu']="";
+            $data['navbar']='includes/navbar_logged.php';
+            $data['body'] = 'account/update_password.php';
+            $data['success']= TRUE;
+            $data['hide']=false;
+            $this->load->view('template', $data);
+        }
+
+    }
+    public function user_current_password($password)
+    {
+        $userdata=$this->session->all_userdata();
+
+        if($this->userdb->check_user_current_password($password,$userdata['user_id']))           //if(true)
+        {
+            return TRUE;
+        }
+        else
+        {
+            return FALSE;
+        }
+    }
     public function MakeInactiveUser($Page,$UserId)
     {
         $this->admindb->MakeInactiveUser($UserId);
