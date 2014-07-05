@@ -118,9 +118,7 @@ $userdata=$this->session->all_userdata();
                             <th>Patient</th>
                             <th>Start Date/Time</th>
                             <th>Duration (min)</th>
-                            <?php if($userdata['role_id']==3) {?>
-                                <th>Status</th>
-                            <?php  } ?>
+                            <th>Status</th>
                             <th>Delete</th>
                         </tr>
                         </thead>
@@ -134,7 +132,23 @@ $userdata=$this->session->all_userdata();
                                     <td><?php echo $appointment['dlast_name'].", ".$appointment['dfirst_name'] ;?></td>
                                     <td><?php echo $appointment['plast_name'].", ".$appointment['pfirst_name'] ;?></td>
                                     <td><?php echo $appointment['start_date_time'] ;?></td>
-                                    <td><?php echo $appointment['duration'] ;?>
+                                    <td><?php echo $appointment['duration'] ;?> </td>
+                                    <td>
+                                        <?php
+                                        $appointment_start_time=strtotime($appointment['start_date_time']);
+                                        $now=strtotime(date('Y-m-d H:i:s'));
+                                        $appointment_end_time= strtotime(($appointment['duration']*60)." minutes ",$appointment_start_time);
+                                        if(($appointment_start_time<$now)&&($now<$appointment_end_time)){
+                                        ?>
+                                            <button class="btn btn-success">Launch</button>
+                                        <?php
+                                        } else{
+                                        ?>
+                                            <button class="btn btn-danger">Expired</button>
+                                        <?php
+                                        }
+                                        ?>
+                                    </td>
                                     <td>
                                         <button class="btn btn-danger deletebutton"  data-id="<?php echo $appointment['appointment_id'] ;?>">
                                             <i class="icon-remove icon-white"></i></button>
@@ -149,7 +163,23 @@ $userdata=$this->session->all_userdata();
                                     <td><?php echo $appointment['dlast_name'].", ".$appointment['dfirst_name'] ;?></td>
                                     <td><?php echo $appointment['plast_name'].", ".$appointment['pfirst_name'] ;?></td>
                                     <td><?php echo $appointment['start_date_time'] ;?></td>
-                                    <td><?php echo $appointment['duration'] ;?>
+                                    <td><?php echo $appointment['duration'] ;?></td>
+                                    <td>
+                                        <?php
+                                        $appointment_start_time=strtotime($appointment['start_date_time']);
+                                        $now=strtotime(date('Y-m-d H:i:s'));
+                                        $appointment_end_time= strtotime(($appointment['duration']*60)." minutes ",$appointment_start_time);
+                                        if(($appointment_start_time<$now)&&($now<$appointment_end_time)){
+                                            ?>
+                                            <button class="btn btn-success">Launch</button>
+                                        <?php
+                                        } else{
+                                            ?>
+                                            <button class="btn btn-danger">Expired</button>
+                                        <?php
+                                        }
+                                        ?>
+                                    </td>
                                     <td>
                                         <button class="btn btn-danger deletebutton"  data-id="<?php echo $appointment['appointment_id'] ;?>">
                                             <i class="icon-remove icon-white"></i></button>
@@ -165,6 +195,22 @@ $userdata=$this->session->all_userdata();
 
                             <td><?php echo $appointment['start_date_time'] ;?></td>
                             <td><?php echo $appointment['duration'] ;?></td>
+                            <td>
+                                <?php
+                                $appointment_start_time=strtotime($appointment['start_date_time']);
+                                $now=strtotime(date('Y-m-d H:i:s'));
+                                $appointment_end_time= strtotime(($appointment['duration']*60)." minutes ",$appointment_start_time);
+                                if(($appointment_start_time<$now)&&($now<$appointment_end_time)){
+                                    ?>
+                                    <button class="btn btn-success">Launch</button>
+                                <?php
+                                } else{
+                                    ?>
+                                    <button class="btn btn-danger">Expired</button>
+                                <?php
+                                }
+                                ?>
+                            </td>
                             <td>
                                 <button class="btn btn-danger deletebutton"  data-id="<?php echo $appointment['appointment_id'] ;?>">
                                     <i class="icon-remove icon-white"></i></button>

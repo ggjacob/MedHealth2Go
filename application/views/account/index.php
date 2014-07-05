@@ -78,22 +78,24 @@ $userdata=$this->session->all_userdata();
                         <form action="users_ctrl" method="post" accept-charset="UTF-8">
                             <input name="action" value="create" type="hidden">
                             <input name="user_id" value="" type="hidden">
-                            <input class="span5" name="first_name" placeholder="first name" type="text">
+                            <input class="span5" name="first_name" placeholder="first name" type="text" maxlength="32" pattern="[A-Za-z ]+" required>
 
-                            <input class="span5" name="last_name" placeholder="last name" type="text">
-                            <input class="span5" name="dob" placeholder="DOB (mm/dd/yyyy)" maxlength="10" type="text">
-                            <input class="span5" name="record_num" placeholder="Record Number" maxlength="32" type="text">
+                            <input class="span5" name="last_name" placeholder="last name" type="text" maxlength="32" pattern="[A-Za-z ]+" required>
 
-                            <input class="span5" name="email" placeholder="email" type="text">
+                            <input class="span5" name="dob" placeholder="DOB (mm/dd/yyyy)" maxlength="10" type="date" pattern="[0-2]{2}\/[0-3]{2}\/[0-9]{4}">
 
-                            <input class="span5" name="phone" placeholder="phone" maxlength="10" type="text">
+                            <input class="span5" name="record_num" placeholder="Record Number" maxlength="32" pattern="[a-zA-Z0-9 ]+" type="text">
+
+                            <input class="span5" name="email" placeholder="email" type="email" required>
+
+                            <input class="span5" name="phone" placeholder="phone number : (123) 456 - 7890" pattern="^(\(\d{3}\)|\d{3})([ -])\d{3}([ -])\d{4}$" type="text">
                             <label class="checkbox" id="changePasswdLbl">
                                 <input id="changePasswd" name="changePasswd" value="1" type="checkbox"> Update Password?
                             </label>
 
-                            <input class="span5" name="password" placeholder="password" disabled="disabled" type="password">
+                            <input class="span5" name="password" placeholder="password" disabled="disabled" pattern=".{8,}" type="password" required>
 
-                            <input class="span5" name="passwordc" placeholder="confirm password" disabled="disabled" type="password">
+                            <input class="span5" name="passwordc" placeholder="confirm password" disabled="disabled" pattern=".{8,}" type="password" required>
 
                             <label class="radio inline">
                                 <input name="role" id="roleoption2" value="1" type="radio">
@@ -120,7 +122,22 @@ $userdata=$this->session->all_userdata();
                         </form>
                     </div>
                 </div>
-            </div>
+
+                <!-- Modal -->
+                <div class="modal fade" id="errorModel" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only"></span></button>
+                                <h4 class="modal-title" id="myModalLabel">Validation Errors</h4>
+                            </div>
+                            <div class="modal-body errorModal">
+                                ...
+                            </div>
+
+                        </div>
+                    </div>
+                </div> </div>
         </div>
     </section>
 </div>
@@ -162,7 +179,9 @@ $userdata=$this->session->all_userdata();
 
             if( data.errors && data.errors.length > 0 )
             {
-                alert(data.errors);
+                //alert(data.errors);
+                $('.errorModal').html(data.errors);
+                $('#errorModel').modal('show');
             }
             else
             {
@@ -185,6 +204,8 @@ $userdata=$this->session->all_userdata();
                         "</td>"+
                         "</tr>";
                     $('#apptTable > tbody > tr:last').after(newRow);
+
+                    //$("#myModal").modal("hide");
                 }
                 else {
                     $("#success-msg").text("User updated.");
@@ -193,9 +214,13 @@ $userdata=$this->session->all_userdata();
                     $("tr[data-user='"+data.user.user_id+"'] td[class='title'] ").text(data.user.role_name);
 
                 }
+
+                $("#myModal").modal("hide");
             }
-            $("#myModal").modal("hide");
+            //$("#myModal").modal("hide");
         },"json");
+
+
 
     });
 
@@ -204,13 +229,17 @@ $userdata=$this->session->all_userdata();
         $.get( "<?php echo base_url();?>account/GetUser/", { user : $(this).data("user") },  function( data ) {
 
             var user = data.user;
+
+            var dates=user.dob.split('-');
+
+
             $("input[name='user_id']").val(user.user_id);
             $("input[name='action']").val('update');
             $("input[name='first_name']").val(user.first_name);
             $("input[name='last_name']").val(user.last_name);
             $("input[name='email']").val(user.email);
             $("input[name='phone']").val(user.phone);
-            $("input[name='dob']").val(user.dob);
+            $("input[name='dob']").val(dates[1]+"/"+dates[2]+"/"+dates[0]);
             $("input[name='record_num']").val(user.record_num);
             $("#changePasswdLbl").show();
             $("#changePasswd").prop('checked',false);

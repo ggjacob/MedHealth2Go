@@ -87,15 +87,20 @@ class Userdb extends CI_Model {
     }
     public function saveUser()
     {
+        $phone=preg_replace("/[^0-9]/","",$this->input->post('phone'));
+
+        $dates=explode('/',$this->input->post('dob'));
+        $date=$dates[2]."-".$dates[1]."-".$dates[0];
+
         $userdata=array(
             'first_name'=>$this->input->post('first_name'),
             'last_name'=>$this->input->post('last_name'),
             'email'=>$this->input->post('email'),
             'record_num'=>$this->input->post('record_num'),
-            'phone'=>$this->input->post('phone'),
+            'phone'=>$phone,
             'role'=>$this->input->post('role'),
             'password'=>$this->input->post('password'),
-            'dob'=>$this->input->post('dob'),
+            'dob'=>$date,
             'acceptMsg'=>$this->input->post('acceptMsg'),
             'active'=>$this->input->post('active')
         );
@@ -109,14 +114,17 @@ class Userdb extends CI_Model {
         $query=$this->db->get();
         return $query->row();
     }
+
     public function saveChangedInfo($user_id)
     {
+        $phone=preg_replace("/[^0-9]/","",$this->input->post('phone'));
+
         $userdata=array(
             'first_name'=>$this->input->post('first_name'),
             'last_name'=>$this->input->post('last_name'),
             'email'=>$this->input->post('email'),
             'record_num'=>$this->input->post('record_num'),
-            'phone'=>$this->input->post('phone'),
+            'phone'=>$phone,
             'role'=>$this->input->post('role'),
             'dob'=>$this->input->post('dob'),
             'acceptMsg'=>$this->input->post('acceptMsg'),

@@ -61,7 +61,7 @@ class Account extends CI_Controller {
     {
 
         $this->form_validation->set_rules('currentPassword', 'Current Password', 'required|callback_user_current_password');
-        $this->form_validation->set_rules('newPassword', 'New Password', 'trim|min_length[5]|max_length[30]|required|matches[confirmPassword]');
+        $this->form_validation->set_rules('newPassword', 'New Password', 'trim|min_length[8]|max_length[30]|required|matches[confirmPassword]');
         $this->form_validation->set_rules('confirmPassword', 'Confirm Password', 'required');
 
         $this->form_validation->set_message('user_current_password','Current password mismatch!');
@@ -151,16 +151,20 @@ class Account extends CI_Controller {
         $action=$this->input->post('action');
         if($action=='update')
         {
-            $this->form_validation->set_rules('first_name', 'First Name', 'trim|required');
-            $this->form_validation->set_rules('last_name', 'Last Name', 'trim|required');
-            $this->form_validation->set_rules('email', 'Email', 'trim|required|valid_email');
-            $this->form_validation->set_rules('password', 'Password', 'trim|matches[passwordc]');
-            $this->form_validation->set_rules('passwordc', 'Password Confirmation', 'trim');
-            $this->form_validation->set_rules('phone', 'Phone', 'trim');
+            $this->form_validation->set_message('validateDate', '%s is not a valid date');
+            $this->form_validation->set_message('alpha_space', '%s can contain only Alpha and Space');
+
+
+            $this->form_validation->set_rules('first_name', 'First Name', 'callback_alpha_space|max_length[32]|trim|required');
+            $this->form_validation->set_rules('last_name', 'Last Name', 'callback_alpha_space|max_length[32]|trim|required');
+            $this->form_validation->set_rules('email', 'Email', 'trim|required|valid_email');;
+            $this->form_validation->set_rules('password', 'Password', 'min_length[8]|trim|required|matches[passwordc]');
+            $this->form_validation->set_rules('passwordc', 'Password Confirmation', 'min_length[8]|trim|required');
+            $this->form_validation->set_rules('phone', 'Phone', 'regex_match[^(\(\d{3}\)|\d{3})([ -])\d{3}([ -])\d{4}$]|trim');
             $this->form_validation->set_rules('acceptMsg', 'Accept Text Messages', 'trim');
             $this->form_validation->set_rules('role', 'Role', 'trim|required');
-            $this->form_validation->set_rules('dob', 'Date of birth', 'trim');
-            $this->form_validation->set_rules('record_num', 'Record Number', 'trim|alpha_numeric');
+            $this->form_validation->set_rules('dob', 'Date of birth', 'callback_validateDate|trim');
+            $this->form_validation->set_rules('record_num', 'Record Number', 'alpha_numeric|trim');
 
             if ($this->form_validation->run() == FALSE)
             {
@@ -177,16 +181,22 @@ class Account extends CI_Controller {
         }
         else if($action=='create')
         {
-            $this->form_validation->set_rules('first_name', 'First Name', 'trim|required');
-            $this->form_validation->set_rules('last_name', 'Last Name', 'trim|required');
+
+
+            $this->form_validation->set_message('validateDate', '%s is not a valid date');
+            $this->form_validation->set_message('alpha_space', '%s can contain only Alpha and Space');
+
+
+            $this->form_validation->set_rules('first_name', 'First Name', 'callback_alpha_space|max_length[32]|trim|required');
+            $this->form_validation->set_rules('last_name', 'Last Name', 'callback_alpha_space|max_length[32]|trim|required');
             $this->form_validation->set_rules('email', 'Email', 'trim|required|valid_email|is_unique[users.email]');;
-            $this->form_validation->set_rules('password', 'Password', 'trim|required|matches[passwordc]');
-            $this->form_validation->set_rules('passwordc', 'Password Confirmation', 'trim|required');
-            $this->form_validation->set_rules('phone', 'Phone', 'trim');
+            $this->form_validation->set_rules('password', 'Password', 'min_length[8]|trim|required|matches[passwordc]');
+            $this->form_validation->set_rules('passwordc', 'Password Confirmation', 'min_length[8]|trim|required');
+            $this->form_validation->set_rules('phone', 'Phone', 'regex_match[^(\(\d{3}\)|\d{3})([ -])\d{3}([ -])\d{4}$]|trim');
             $this->form_validation->set_rules('acceptMsg', 'Accept Text Messages', 'trim');
             $this->form_validation->set_rules('role', 'Role', 'trim|required');
-            $this->form_validation->set_rules('dob', 'Date of birth', 'trim');
-            $this->form_validation->set_rules('record_num', 'Record Number', 'trim|alpha_numeric');
+            $this->form_validation->set_rules('dob', 'Date of birth', 'callback_validateDate|trim');
+            $this->form_validation->set_rules('record_num', 'Record Number', 'alpha_numeric|trim');
 
             if ($this->form_validation->run() == FALSE)
             {
@@ -200,6 +210,25 @@ class Account extends CI_Controller {
         }
         echo json_encode($data);
     }
+    public function alpha_space($subject)
+    {
+        $pattern="/[A-Za-z ]+/";
+        if(preg_match($pattern, $subject))
+            return $subject;
+        else
+            return false;
+    }
+    function validateDate($date, $format = 'mm/dd/yyyy')
+    {
+        $pattern="/[0-2]{2}\/[0-3]{2}\/[0-9]{4}/";
+       if(preg_match($pattern, $date))
+           return $date;
+        else
+            return false;
+
+    }
+
+//var_dump(validateDate('2012-02-28 12:12:12')); # true
     public function Activity()
     {
         $UserId=$this->input->post('user');

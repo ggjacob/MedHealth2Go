@@ -171,6 +171,29 @@ class Appointment extends CI_Controller {
         $data['body'] = 'includes/blank_page.php';
         $this->load->view('template', $data);
     }
+    public function getMeetinginfo($meetingId=0)
+    {
+        $userdata=$this->session->all_userdata();
+        if(isset($userdata['logged_in']))
+        {
+            $meetingInfo=$this->appointmentdb->getMeetinginfo($meetingId);
+            if(count($meetingInfo)>0)
+                echo json_encode($meetingInfo);
+            else
+            {
+                $message="No Appointment available for current user and ID combination";
+                echo json_encode($message);
+            }
+        }
+
+        else
+        {
+            $message="You are not eligible to access the service";
+            echo json_encode($message);
+        }
+
+
+    }
 
         /* Ajax functionality*/
     public  function deleteAppointment()
